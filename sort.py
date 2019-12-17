@@ -20,7 +20,6 @@ for file in files:
     fileExt = os.path.splitext(file)[-1].lower()
     exts.add(fileExt[1:])
 
-exts.remove('')
 
 
 def compareandcreate(file):
