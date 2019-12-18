@@ -14,30 +14,28 @@ def createAndMove(dirName, file):
 
 files = os.listdir('./')
 
-for file in files:
-    fileExt = os.path.splitext(file)[1].lower()
+exts = set()
 
-    if fileExt == '.png' or fileExt == '.png~' or fileExt == '.jpg' or fileExt == '.jpeg' or fileExt == '.svg' or fileExt == '.gif':
-        createAndMove('imgFolder', file)
-    elif fileExt == '.pdf':
-        createAndMove('pdfFolder', file)
-    elif fileExt == '.zip' or fileExt == '.rar' or fileExt == '.gz' or fileExt == '.xz':
-        createAndMove('zipFiles', file)
-    elif fileExt == '.mp3':
-        createAndMove('musicFolder', file)
-    elif fileExt == '.sql':
-        createAndMove('sqlFolder', file)
-    elif fileExt == '.deb':
-        createAndMove('debFolder', file)
-    elif fileExt == '.mp4':
-        createAndMove('videoFolder', file)
-    elif fileExt == '.ttf':
-        createAndMove('fontsFolder', file)
-    elif fileExt == '.html' or fileExt == '.php' or fileExt == '.exe':
-        createAndMove('codeFolder', file)
+for file in files:
+    fileExt = os.path.splitext(file)[-1].lower()
+    exts.add(fileExt[1:])
+
+exts.remove('')
+
+
+def compareandcreate(file):
+    fileE = os.path.splitext(file)[-1][1:].lower()
+    isFile = os.path.isfile(file)
+    if fileE in exts:
+        if isFile and file != 'sort.py':
+            fileName = f'{fileE}Folder'
+            createAndMove(fileName, file)
     else:
-        isFile = os.path.isfile(file)
-        if file != 'sort.py' and isFile:
+        if isFile:
             createAndMove('anotherExt', file)
 
-print('your files had been formatted :D')
+
+x = map(compareandcreate, files)
+print(list(x))
+
+print('Your Files Had Been Sorted')
