@@ -1,40 +1,46 @@
 import os
-import os.path
+import sys
+import os.path as path
 import shutil
 
-
-def createAndMove(dirName, file):
-    try:
-        os.makedirs(dirName)
-        shutil.move(f'./{file}', f'./{dirName}/{file}')
-        print("Directory ", dirName, " Created ")
-    except FileExistsError:
-        shutil.move(f'./{file}', f'./{dirName}/{file}')
-
-
-files = os.listdir('./')
-
-exts = set()
-
-for file in files:
-    fileExt = os.path.splitext(file)[-1].lower()
-    exts.add(fileExt[1:])
-
-
-
-def compareandcreate(file):
-    fileE = os.path.splitext(file)[-1][1:].lower()
-    isFile = os.path.isfile(file)
-    if fileE in exts:
-        if isFile and file != 'sort.py':
-            fileName = f'{fileE}Folder'
-            createAndMove(fileName, file)
+if len(sys.argv) > 1:
+    if (path.isdir(sys.argv[1])):
+        dir = sys.argv[1]
+        dir += '/' if dir[-1] != '/' else ''
     else:
-        if isFile:
-            createAndMove('anotherExt', file)
+        print("Please Enter Valid Directory ")
+        exit()
+else:
+    dir = './'
 
 
-x = map(compareandcreate, files)
-print(list(x))
+def move(file, directory):
+    source = dir + file
+    dist = dir + directory + "/" + file
+    shutil.move(source, dist)
 
-print('Your Files Had Been Sorted')
+
+def getExt(file):
+    return path.splitext(file)[-1][1:].lower()
+
+
+def sortFiles(files, folder, ext):
+    for file in files:
+        if file != f'sort.py':
+            if (getExt(file) == ext):
+                move(file, folder)
+                print(f"{file}  moved successfully")
+
+
+files = os.listdir(dir)
+exts = set(getExt(file) for file in files if getExt(file))
+for ext in exts:
+    directory = f'{ext}Directory'
+    parentDir = dir
+    dir_path = path.join(parentDir, directory)
+    if path.isdir(dir_path):
+        sortFiles(files, directory, ext)
+    else:
+        os.mkdir(dir_path)
+        print(f"{directory} Created successfully")
+        sortFiles(files, directory, ext)
